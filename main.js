@@ -25,22 +25,30 @@ class Food {
         this.width = 20;
         this.height = 20;
         this.color = 'red';
-        // this.x = 0;
-        // this.y = 0
+        this.x = 0;
+        this.y = 0
 
         this.display()
     }
     display() {
-        var div = document.createElement('div');
-        div.style.width = this.width + 'px';
-        div.style.height = this.height + 'px';
-        div.style.position = 'absolute';
-        div.style.background = this.color;
-        div.style.left = Math.round(Math.random() * 39) * this.width + 'px';
+        //没有时创建,防止randomCreate时冲突创建两个
+        if (!this.div) {
+            this.div = document.createElement('div');
+        }
+        this.div.style.width = this.width + 'px';
+        this.div.style.height = this.height + 'px';
+        this.div.style.position = 'absolute';
+        this.div.style.background = this.color;
+        this.div.style.left = this.x * this.width + 'px';
         // console.log(div.style.left);
-        div.style.top = Math.round(Math.random() * 19) * this.height + 'px';
+        this.div.style.top = this.y * this.height + 'px';
         // console.log(div.style.top);
-        map.div.appendChild(div)
+        map.div.appendChild(this.div)
+    }
+    randomCreate() {
+        this.x = Math.round(Math.random() * 39)
+        this.y = Math.round(Math.random() * 19)
+        this.display()
     }
 
 }
@@ -56,18 +64,19 @@ class Snake {
     }
     display() {
         for (var i = 0; i < this.body.length; i++) {
-            this.div = document.createElement('div');
-            this.div.style.width = this.width + 'px';
-            this.div.style.height = this.height + 'px';
-            this.div.style.position = 'absolute';
-            this.div.style.background = this.body[i][2];
-            this.div.style.left = this.body[i][0] * this.width + 'px';
-            this.div.style.top = this.body[i][1] * this.height + 'px';
-            map.div.appendChild(this.div);
+            // this.body数组中添加元素,以确定是否需创建div
+            if (!this.body[i][3]) {
+                this.body[i][3] = document.createElement('div');
+            }
+            this.body[i][3].style.width = this.width + 'px';
+            this.body[i][3].style.height = this.height + 'px';
+            this.body[i][3].style.position = 'absolute';
+            this.body[i][3].style.background = this.body[i][2];
+            this.body[i][3].style.left = this.body[i][0] * this.width + 'px';
+            this.body[i][3].style.top = this.body[i][1] * this.height + 'px';
+            map.div.appendChild(this.body[i][3]);
+            // console.log(this.body[i][3]);
         }
-        // setInterval(() => {
-        //     this.move()
-        // }, 300);
         setTimeout(() => {
             this.move()
         }, 300);
@@ -85,6 +94,18 @@ class Snake {
             case 'right': this.body[0][0]++; break;
             case 'down': this.body[0][1]++; break;
         }
+        //撞墙判断
+        if (this.body[0][0] < 0 || this.body[0][0] > 39 || this.body[0][1] < 0 || this.body[0][1] > 19) {
+            alert('撞墙了');
+            return null;
+        }
+
+        // 吃食物判断
+        if (this.body[0][0] == map.food.x && this.body[0][1] == map.food.y){
+            
+        }
+
+            this.display()
     }
     // 键盘按下事件判断移动方向
     direction(value) {
@@ -96,10 +117,12 @@ class Snake {
         }
     }
 
+
 }
 
 var map = new Map();
 var food = new Food();
+food.randomCreate()
 var snake = new Snake();
 
 // 判断按键
