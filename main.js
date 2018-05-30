@@ -18,7 +18,6 @@ class Map {
     }
 }
 
-
 // 食物
 class Food {
     constructor() {
@@ -52,7 +51,7 @@ class Food {
     }
 
 }
-
+// 蛇
 class Snake {
     constructor() {
         this.width = 20;
@@ -101,11 +100,22 @@ class Snake {
         }
 
         // 吃食物判断
-        if (this.body[0][0] == map.food.x && this.body[0][1] == map.food.y){
-            
+        if (this.body[0][0] == food.x && this.body[0][1] == food.y) {
+            var x = this.body[this.body.length - 1][0]
+            var y = this.body[this.body.length - 1][1]
+            this.body.push([x, y, 'green'])
+            //碰撞食物后食物移动
+            food.randomCreate()
+        }
+        // 碰到自己
+        for (var j = 1; j < this.body.length; j++) {
+            if (this.body[0][0] == this.body[j][0] && this.body[0][1] == this.body[j][1]) {
+                alert('碰到自己了')
+                return null;
+            }
         }
 
-            this.display()
+        this.display()
     }
     // 键盘按下事件判断移动方向
     direction(value) {
@@ -116,8 +126,6 @@ class Snake {
             case 40: this.direct = 'down'; break;
         }
     }
-
-
 }
 
 var map = new Map();
